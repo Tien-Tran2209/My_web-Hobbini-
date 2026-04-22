@@ -1,0 +1,193 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/styleOrder.css') }}">
+{% endblock %}
+
+{% block title %}Gestion des commandes{% endblock %}
+
+{% block body %}
+
+<style>
+    .page-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--primary, #7B8CD8);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+        color: #555;
+        border-bottom: 2px solid #eee;
+    }
+
+    td {
+        padding: 12px;
+        font-size: 14px;
+        border-bottom: 1px solid #f1f1f1;
+        vertical-align: middle;
+    }
+
+    tr:hover {
+        background: #fafafa;
+    }
+
+    /* STATUS */
+    .status-select {
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .status-attente { background: #f39c12; }
+    .status-valide { background: #7B8CD8; }
+    .status-expedie { background: #2ecc71; }
+    .status-annule { background: #e74c3c; }
+
+    /* BADGES */
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 5px;
+    }
+
+    .bg-danger { background: #e74c3c; color: white; }
+    .bg-dark { background: #333; color: white; }
+
+    /* BUTTONS */
+    .btn-link {
+        color: var(--primary, #7B8CD8);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 15px;
+        background: #f2f2f2;
+        padding: 8px 12px;
+        border-radius: 10px;
+        color: #444;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .btn-back:hover {
+        background: #e0e0e0;
+    }
+</style>
+
+<h1 class="page-title text-center">
+    📦 Gestion des commandes
+</h1>
+
+{% if orders|length > 0 %}
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for order in orders %}
+            <tr>
+
+                <td>#{{ order.id }}</td>
+
+                <td>{{ order.user.email }}</td>
+
+                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+
+                <td><strong>{{ order.totalPrice }} €</strong></td>
+
+                <td>
+
+                    <form method="post" action="{{ path('admin_order_update_status', {id: order.id}) }}">
+
+                        <select name="status"
+                                onchange="this.form.submit()"
+                                class="status-select
+                                    {% if order.status == 'En attente' %}status-attente{% endif %}
+                                    {% if order.status == 'Validé' %}status-valide{% endif %}
+                                    {% if order.status == 'Expédié' %}status-expedie{% endif %}
+                                    {% if order.status == 'Annulé' %}status-annule{% endif %}
+                                ">
+
+                            <option value="En attente" {% if order.status == 'En attente' %}selected{% endif %}>En attente</option>
+                            <option value="Validé" {% if order.status == 'Validé' %}selected{% endif %}>Validé</option>
+                            <option value="Expédié" {% if order.status == 'Expédié' %}selected{% endif %}>Expédié</option>
+                            <option value="Annulé" {% if order.status == 'Annulé' %}selected{% endif %}>Annulé</option>
+
+                        </select>
+
+                    </form>
+
+                    {% if order.status == 'Annulé' %}
+                        {% if order.cancelledBy == 'client' %}
+                            <span class="badge bg-danger">Annulé (client)</span>
+                        {% else %}
+                            <span class="badge bg-dark">Annulé (admin)</span>
+                        {% endif %}
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    <a href="{{ path('admin_order_show', {id: order.id}) }}" class="btn-link">
+                        Voir
+                    </a>
+                </td>
+
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% else %}
+    <p>Aucune commande trouvée.</p>
+{% endif %}
+
+{% endblock %}

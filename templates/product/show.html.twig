@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block body %}
+
+<style>
+    .product-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+        padding: 25px;
+        display: flex;
+        gap: 30px;
+    }
+
+    /* IMAGE */
+    .product-image img {
+        width: 100%;
+        max-width: 350px;
+        border-radius: 14px;
+        object-fit: cover;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    /* INFO */
+    .product-info {
+        flex: 1.2;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    /* TITLE */
+    .title-wrapper {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        margin-bottom: 10px;
+    }
+
+    .product-title {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--primary, #7B8CD8);
+        text-align: center;
+        margin: 0;
+    }
+
+    /* INFO BLOCKS */
+    .info-block {
+        padding: 12px 14px;
+        background: #f8f9fb;
+        border-radius: 12px;
+    }
+
+    .label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .value {
+        font-size: 15px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .price {
+        font-size: 24px;
+        font-weight: 900;
+        color: var(--primary, #7B8CD8);
+    }
+
+    .description {
+        line-height: 1.6;
+        color: #444;
+        font-size: 14px;
+    }
+
+    /* BUTTON SYSTEM */
+    .btn {
+        display: inline-block;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+        width: fit-content;
+    }
+
+    .btn-primary {
+        background: var(--primary, #7B8CD8);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark, #5f6fd1);
+    }
+
+    .btn-back {
+        background: #f2f2f2;
+        color: #444;
+        margin-top: 10px;
+    }
+
+    .btn-back:hover {
+        background: #e0e0e0;
+    }
+
+    /* ACTION BLOCK FIX */
+    .action-block {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+        align-items: flex-start;
+    }
+
+    .stock-ok,
+    .stock-out {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+
+    .stock-ok {
+        background: #e8f5e9;
+        color: green;
+    }
+
+    .stock-out {
+        background: #fdecea;
+        color: red;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+        .product-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .product-title {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="product-container">
+
+    <!-- IMAGE -->
+    <div class="product-image">
+        <img src="{{ asset(product.imageUrl) }}" alt="{{ product.name }}">
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+
+        <!-- TITLE -->
+        <div class="title-wrapper">
+            <h1 class="product-title">{{ product.name }}</h1>
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="info-block">
+            <span class="label">Catégorie</span>
+            <div class="value">{{ product.category.name }}</div>
+        </div>
+
+        <!-- PRICE -->
+        <div class="info-block">
+            <span class="label">Prix</span>
+            <div class="price">{{ product.price }} €</div>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="info-block">
+            <span class="label">Description</span>
+            <div class="description">{{ product.description }}</div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div>
+
+            {% if is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') %}
+
+                <div class="action-block">
+
+                    {% if product.remaining > 0 %}
+                        <a href="{{ path('cart_add', {id: product.id}) }}" class="btn btn-primary">
+                            🛒 Ajouter au panier
+                        </a>
+                        <div class="stock-ok">✔ En stock</div>
+                    {% else %}
+                        <div class="stock-out">❌ Rupture de stock</div>
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_product_edit', {id: product.id}) }}" class="btn btn-primary">
+                    ✏️ Modifier
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+<style>
+    .auth-card {
+        border-radius: 18px;
+        border: none;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .auth-card h3 {
+        font-weight: 600;
+        color: #7B8CD8;
+        letter-spacing: 0.5px;
+    }
+
+    .auth-subtitle {
+        font-size: 0.95rem;
+        color: rgba(0,0,0,0.55);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: rgba(0,0,0,0.65);
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: rgba(255,255,255,0.9);
+    }
+
+    .form-control:focus {
+        border-color: #7B8CD8;
+        box-shadow: 0 0 0 0.2rem rgba(123, 140, 216, 0.25);
+    }
+
+    .btn-auth {
+        background: #7B8CD8;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        color: white;
+        transition: 0.2s ease-in-out;
+    }
+
+    .btn-auth:hover {
+        background: #6678cf;
+    }
+
+    .auth-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+
+    .auth-link {
+        color: #7B8CD8;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-5 col-lg-4">
+
+        <div class="card auth-card">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-3">
+                    <img src="{{ asset('images/logo-hobbini.png') }}" class="auth-logo" alt="logo">
+                </div>
+
+                <h3 class="text-center mb-2">Create Account</h3>
+                <p class="text-center auth-subtitle mb-4">
+                    Join Hobbini and start your journey today 🚀
+                </p>
+
+                {% for flash_error in app.flashes('verify_email_error') %}
+                    <div class="alert alert-danger">{{ flash_error }}</div>
+                {% endfor %}
+
+                {{ form_start(registrationForm) }}
+
+                    <div class="mb-3">
+                        {{ form_row(registrationForm.email, {
+                            label_attr: { class: 'form-label' },
+                            attr: { class: 'form-control', placeholder: 'Enter your email' }
+                        }) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_row(registrationForm.plainPassword, {
+                            label: 'Password',
+                            label_attr: { class: 'form-label' },
+                            attr: { class: 'form-control', placeholder: 'Enter your password' }
+                        }) }}
+                    </div>
+
+                    <div class="form-check mb-3">
+                        {{ form_widget(registrationForm.agreeTerms, { attr: { class: 'form-check-input' } }) }}
+                        {{ form_label(registrationForm.agreeTerms, null, { label_attr: { class: 'form-check-label' } }) }}
+                    </div>
+
+                    <button type="submit" class="btn btn-auth w-100">
+                        Register
+                    </button>
+
+                {{ form_end(registrationForm) }}
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Already have an account?
+                        <a href="{{ path('app_login') }}" class="auth-link">Login</a>
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

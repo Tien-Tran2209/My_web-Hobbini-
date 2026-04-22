@@ -1,0 +1,10 @@
+.status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.status-attente { background: gray; }
+.status-valide { background: green; }
+.status-expedie { background: blue; }
+.status-annule { background: red; }
