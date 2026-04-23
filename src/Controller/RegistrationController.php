@@ -4,17 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Security\AppLoginAuthenticator;
 use App\Security\EmailVerifier;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use App\Service\RegistrationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
@@ -25,53 +20,25 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(
-        Request $request,
-        UserPasswordHasherInterface $passwordHasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        AppLoginAuthenticator $authenticator,
-        EntityManagerInterface $entityManager
-    ): Response
+    public function register(Request $request, RegistrationService $registrationService): Response
     {
         $user = new User();
+
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hash password
-            $user->setPassword(
-                $passwordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
 
-            //Only the default ROLE_USER role
-            $user->setRoles(['ROLE_USER']);
+            try {
+                $plainPassword = $form->get('plainPassword')->getData();
+                $registrationService->registerUser($user, $plainPassword);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+                return $this->redirectToRoute('app_login');
 
-            $this->emailVerifier->sendEmailConfirmation(
-                'app_verify_email',
-                $user,
-                (new TemplatedEmail())
-                    ->from(new Address('no-reply@myweb.com', 'MyWeb'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-
-            // Connectez-vous avec votre nom d'utilisateur immédiatement après votre inscription.
-            /*$response = $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );*/
-            return $this->redirectToRoute('app_login');
-
-            // A fixed redirect to the product page, removing the old target path.
-            return $this->redirectToRoute('product_index');
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute('app_register');
+            }
         }
 
         return $this->render('registration/register.html.twig', [
@@ -88,7 +55,9 @@ class RegistrationController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
             $this->emailVerifier->handleEmailConfirmation($request, $user);
+
         } catch (VerifyEmailExceptionInterface $exception) {
+
             $this->addFlash(
                 'verify_email_error',
                 $translator->trans($exception->getReason(), [], 'VerifyEmailBundle')
@@ -99,7 +68,6 @@ class RegistrationController extends AbstractController
 
         $this->addFlash('success', 'Your email address has been verified.');
 
-        // Redirection corrected after email verification
         return $this->redirectToRoute('product_index');
     }
 }

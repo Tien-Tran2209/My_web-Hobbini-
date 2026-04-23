@@ -41,6 +41,12 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'orderRef')]
     private Collection $orderItems;
 
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $paymentMethod = null;
+
+    #[ORM\Column(length: 30)]
+    private ?string $paymentStatus = 'pending';
+
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
@@ -143,6 +149,28 @@ class Order
     public function setUserOrderNumber(int $userOrderNumber): self
     {
         $this->userOrderNumber = $userOrderNumber;
+        return $this;
+    }
+
+    public function getPaymentMethod(): ?string
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(?string $paymentMethod): self
+    {
+        $this->paymentMethod = $paymentMethod;
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?string
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(string $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
         return $this;
     }
 }

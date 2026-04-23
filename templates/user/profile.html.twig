@@ -3,6 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/styleOrder.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -11,206 +12,8 @@ Profil de {{ user.email }}
 
 {% block body %}
 
-<style>
-    .page-title {
-        text-align: center;
-        font-size: 26px;
-        font-weight: 800;
-        color: var(--logo-text-color, #7B8CD8);
-        margin-bottom: 25px;
-    }
-
-    .profile-container {
-        max-width: 1100px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-    }
-
-    .card-box {
-        background: white;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    .card-title {
-        font-size: 18px;
-        font-weight: 800;
-        color: var(--logo-text-color, #7B8CD8);
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th {
-        text-align: left;
-        padding: 12px;
-        font-size: 13px;
-        color: #666;
-        border-bottom: 2px solid #eee;
-    }
-
-    td {
-        padding: 12px;
-        font-size: 14px;
-        border-bottom: 1px solid #f1f1f1;
-        vertical-align: middle;
-    }
-
-    tr:hover {
-        background: #fafafa;
-    }
-
-    img {
-        border-radius: 10px;
-        background: #f5f5f5;
-        padding: 3px;
-    }
-
-    /* BUTTON SYSTEM */
-    .btn-custom {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 14px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 700;
-        transition: 0.2s;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .btn-primary {
-        background: var(--logo-text-color, #7B8CD8);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #5f6fd1;
-    }
-
-    .btn-danger {
-        background: #e74c3c;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #c0392b;
-    }
-
-    .btn-light {
-        background: #f2f2f2;
-        color: #444;
-    }
-
-    .btn-light:hover {
-        background: #e0e0e0;
-    }
-
-    /* CART QTY BUTTONS */
-    .qty-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .qty-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: #f2f2f2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        font-weight: 900;
-        color: #444;
-        transition: 0.2s;
-    }
-
-    .qty-btn:hover {
-        background: rgba(123,140,216,0.2);
-        color: var(--logo-text-color, #7B8CD8);
-    }
-
-    .qty-number {
-        font-weight: 800;
-        min-width: 20px;
-        text-align: center;
-    }
-
-    /* STATUS BADGES */
-    .status-badge {
-        padding: 6px 12px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 700;
-        color: white;
-        display: inline-block;
-        margin-left: 6px;
-    }
-
-    .status-attente { background: #f39c12; }
-    .status-valide { background: #7B8CD8; }
-    .status-expedie { background: #2ecc71; }
-    .status-annule { background: #e74c3c; }
-
-    /* TOTAL BOX */
-    .total-box {
-        text-align: right;
-        margin-top: 12px;
-        font-size: 16px;
-        font-weight: 800;
-        color: var(--logo-text-color, #7B8CD8);
-    }
-
-    /* FLASH */
-    .flash-msg {
-        margin-bottom: 10px;
-        padding: 12px;
-        border-radius: 12px;
-        font-weight: 700;
-        text-align: center;
-    }
-
-    .flash-success {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .flash-error {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    /* MOBILE */
-    @media (max-width: 768px) {
-        th, td {
-            font-size: 12px;
-            padding: 8px;
-        }
-
-        .btn-custom {
-            font-size: 13px;
-            padding: 8px 12px;
-        }
-    }
-</style>
-
 <div class="profile-container">
 
-    {# FLASH MESSAGES #}
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             <div class="flash-msg {% if label == 'success' %}flash-success{% else %}flash-error{% endif %}">
@@ -225,58 +28,54 @@ Profil de {{ user.email }}
 
     <!-- CART -->
     <div class="card-box">
-        <div class="card-title">
-            🛒 Votre panier
-        </div>
+        <div class="card-title">🛒 Votre panier</div>
 
         {% if cart and cart.cartItems|length > 0 %}
             <table>
                 <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Produit</th>
-                        <th>Quantité</th>
-                        <th>Prix</th>
-                        <th>Total</th>
-                        <th>Supprimer</th>
-                    </tr>
+                <tr>
+                    <th>Image</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix</th>
+                    <th>Total</th>
+                    <th>Supprimer</th>
+                </tr>
                 </thead>
 
                 <tbody>
-                    {% set totalCartPrice = 0 %}
-                    {% for item in cart.cartItems %}
-                        {% set totalItemPrice = item.quantity * item.product.price %}
-                        {% set totalCartPrice = totalCartPrice + totalItemPrice %}
+                {% set totalCartPrice = 0 %}
 
-                        <tr>
-                            <td>
-                                <img src="{{ asset(item.product.imageUrl) }}"
-                                     alt="{{ item.product.name }}"
-                                     style="width:60px; height:auto;">
-                            </td>
+                {% for item in cart.cartItems %}
+                    {% set totalItemPrice = item.quantity * item.product.price %}
+                    {% set totalCartPrice = totalCartPrice + totalItemPrice %}
 
-                            <td>{{ item.product.name }}</td>
+                    <tr>
+                        <td>
+                            <img src="{{ asset(item.product.imageUrl) }}"
+                                 alt="{{ item.product.name }}"
+                                 style="width:60px;">
+                        </td>
 
-                            <td>
-                                <div class="qty-actions">
-                                    <a href="{{ path('cart_decrease', {id: item.id}) }}" class="qty-btn">−</a>
-                                    <span class="qty-number">{{ item.quantity }}</span>
-                                    <a href="{{ path('cart_increase', {id: item.id}) }}" class="qty-btn">+</a>
-                                </div>
-                            </td>
+                        <td>{{ item.product.name }}</td>
 
-                            <td>{{ item.product.price }} €</td>
-                            <td><strong>{{ totalItemPrice }} €</strong></td>
+                        <td>
+                            <div class="qty-actions">
+                                <a href="{{ path('cart_decrease', {id: item.id}) }}" class="qty-btn">−</a>
+                                <span class="qty-number">{{ item.quantity }}</span>
+                                <a href="{{ path('cart_increase', {id: item.id}) }}" class="qty-btn">+</a>
+                            </div>
+                        </td>
 
-                            <td>
-                                <a href="{{ path('cart_remove', {id: item.id}) }}"
-                                   class="btn-custom btn-danger"
-                                   style="padding:6px 10px;">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                        <td>{{ item.product.price }} €</td>
+                        <td><strong>{{ totalItemPrice }} €</strong></td>
+
+                        <td>
+                            <a href="{{ path('cart_remove', {id: item.id}) }}"
+                               class="btn-custom btn-danger">🗑</a>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
 
@@ -284,29 +83,32 @@ Profil de {{ user.email }}
                 Total Panier: {{ totalCartPrice }} €
             </div>
 
-            <div style="margin-top: 15px;">
-                <a href="{{ path('checkout') }}" class="btn-custom btn-primary">
-                    <i class="bi bi-bag-check"></i>
-                    Passer la commande
+            <div class="d-flex gap-2 mt-3">
+                <a href="{{ path('checkout', {method:'cod'}) }}"
+                   class="btn-custom btn-primary">
+                    💵 Paiement à la livraison
+                </a>
+
+                <a href="{{ path('checkout', {method:'stripe'}) }}"
+                   class="btn-custom btn-light">
+                    💳 Carte bancaire
                 </a>
             </div>
 
         {% else %}
-            <p style="color:#777; margin:0;">Votre panier est vide.</p>
+            <p style="color:#777;">Votre panier est vide.</p>
         {% endif %}
     </div>
 
     <!-- ORDERS -->
     <div class="card-box">
-        <div class="card-title">
-            📦 Vos commandes
-        </div>
+        <div class="card-title">📦 Vos commandes</div>
 
         {% if orders|length > 0 %}
 
             {% for order in orders %}
 
-                <div style="margin-bottom: 15px; font-weight: 800; color:#333;">
+                <div style="margin-bottom: 15px; font-weight: 800;">
                     Commande #{{ order.userOrderNumber }} - {{ order.createdAt|date('d/m/Y H:i') }}
 
                     <span class="status-badge
@@ -316,71 +118,65 @@ Profil de {{ user.email }}
                         {% if order.status == 'Annulé' %}status-annule{% endif %}
                     ">
                         {{ order.status }}
-
-                        {% if order.status == 'Annulé' %}
-                            {% if order.cancelledBy == 'client' %}
-                                (par vous)
-                            {% elseif order.cancelledBy == 'admin' %}
-                                (par boutique)
-                            {% endif %}
-                        {% endif %}
                     </span>
 
                     {% if order.status == 'En attente' %}
                         <a href="{{ path('order_cancel', {id: order.id}) }}"
                            class="btn-custom btn-danger"
-                           style="margin-left: 10px;"
-                           onclick="return confirm('Voulez-vous annuler cette commande ?')">
-                            <i class="bi bi-x-circle"></i>
+                           onclick="return confirm('Annuler ?')">
                             Annuler
                         </a>
                     {% endif %}
                 </div>
 
-                <table style="margin-bottom:20px;">
+                <table>
                     <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Produit</th>
-                            <th>Quantité</th>
-                            <th>Prix</th>
-                            <th>Total</th>
-                        </tr>
+                    <tr>
+                        <th>Image</th>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix</th>
+                        <th>Total</th>
+                    </tr>
                     </thead>
 
                     <tbody>
-                        {% set totalOrderPrice = 0 %}
+                    {% set totalOrderPrice = 0 %}
 
-                        {% for item in order.orderItems %}
-                            {% set itemTotal = item.quantity * item.product.price %}
-                            {% set totalOrderPrice = totalOrderPrice + itemTotal %}
+                    {% for item in order.orderItems %}
+                        {% set itemTotal = item.quantity * item.product.price %}
+                        {% set totalOrderPrice = totalOrderPrice + itemTotal %}
 
-                            <tr>
-                                <td>
-                                    <img src="{{ asset(item.product.imageUrl) }}"
-                                         alt="{{ item.product.name }}"
-                                         style="width:60px; height:auto;">
-                                </td>
-                                <td>{{ item.product.name }}</td>
-                                <td>{{ item.quantity }}</td>
-                                <td>{{ item.product.price }} €</td>
-                                <td><strong>{{ itemTotal }} €</strong></td>
-                            </tr>
-                        {% endfor %}
+                        <tr>
+                            <td>
+                                <img src="{{ asset(item.product.imageUrl) }}"
+                                     alt="{{ item.product.name }}"
+                                     style="width:60px;">
+                            </td>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.product.price }} €</td>
+                            <td><strong>{{ itemTotal }} €</strong></td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
 
-                <div class="total-box" style="margin-bottom: 25px;">
+                <div class="total-box">
                     Total Commande: {{ totalOrderPrice }} €
                 </div>
 
             {% endfor %}
 
         {% else %}
-            <p style="color:#777; margin:0;">Vous n'avez pas encore passé de commandes.</p>
+            <p style="color:#777;">Vous n'avez pas encore de commandes.</p>
         {% endif %}
     </div>
 
+</div>
+
+<div class="d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
 </div>
 
 {% endblock %}

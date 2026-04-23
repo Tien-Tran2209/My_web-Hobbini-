@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<h1 class="dashboard-title">📈 Dashboard Admin</h1>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">💰 Chiffre d'affaires</div>
+            <div class="stat-value">{{ revenue }} €</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">📦 Total commandes</div>
+            <div class="stat-value">{{ ordersCount }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">⏳ En attente</div>
+            <div class="stat-value">{{ pending }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">⚠️ Rupture stock</div>
+            <div class="stat-value">{{ rupture }}</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="section-box">
+    <div class="section-title">🔥 Top 5 Produits</div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Vendus</th>
+                <th>Stock restant</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in topProducts %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }} €</td>
+                <td>{{ product.sold }}</td>
+                <td>{{ product.remaining }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="section-box">
+    <div class="section-title">📦 Dernières commandes</div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Client</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for order in latestOrders %}
+            <tr>
+                <td>{{ order.userOrderNumber }}</td>
+                <td>{{ order.user.email }}</td>
+                <td>{{ order.totalPrice }} €</td>
+                <td>
+                    <span class="badge-status
+                        {% if order.status == 'En attente' %}pending{% endif %}
+                        {% if order.status == 'Validé' %}valid{% endif %}
+                        {% if order.status == 'Expédié' %}shipped{% endif %}
+                        {% if order.status == 'Annulé' %}cancel{% endif %}
+                    ">
+                        {{ order.status }}
+                    </span>
+                </td>
+                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

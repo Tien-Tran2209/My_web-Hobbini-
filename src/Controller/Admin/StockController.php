@@ -3,32 +3,44 @@
 namespace App\Controller\Admin;
 
 use App\Repository\ProductRepository;
+use App\Service\StockService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class StockController extends AbstractController
 {
     #[Route('/admin/product/stock', name: 'admin_product_stock')]
-    public function index(ProductRepository $productRepo): Response
-    {
-        $products = $productRepo->findAll();
+    public function index(
+        ProductRepository $productRepo,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $query = $productRepo->createQueryBuilder('p')->getQuery();
+
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
 
         $stats = [];
 
-        foreach ($products as $product) {
-
+        foreach ($pagination as $product) {
             $stats[] = [
                 'product' => $product,
                 'sold' => $product->getSold(),
-                'remaining' => $product->getRemaining()
+                'remaining' => $product->getRemaining(),
             ];
         }
 
         return $this->render('admin/product/stock.html.twig', [
-            'stats' => $stats
+            'stats' => $stats,
+            'pagination' => $pagination,
         ]);
     }
 
@@ -37,7 +49,7 @@ class StockController extends AbstractController
         int $id,
         ProductRepository $productRepo,
         Request $request,
-        EntityManagerInterface $em
+        StockService $stockService
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -49,13 +61,9 @@ class StockController extends AbstractController
 
         $newStock = (int) $request->request->get('stock');
 
-        if ($newStock < 0) {
-            $newStock = 0;
-        }
+        $stockService->update($product, $newStock);
 
-        $product->setStock($newStock);
-
-        $em->flush();
+        $this->addFlash('success', 'Stock mis à jour avec succès.');
 
         return $this->redirectToRoute('admin_product_stock');
     }

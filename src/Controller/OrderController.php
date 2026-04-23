@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\Entity\OrderItem;
-use App\Repository\OrderRepository;
+use App\Service\OrderCheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,67 +11,35 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class OrderController extends AbstractController
 {
-    #[Route('/checkout', name: 'checkout')]
-    public function checkout(EntityManagerInterface $manager, OrderRepository $orderRepo): Response
+    #[Route('/checkout/{method}', name: 'checkout')]
+    public function checkout(string $method, OrderCheckoutService $checkoutService): Response
     {
         $user = $this->getUser();
+
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $cart = $user->getCart();
-        if (!$cart || $cart->getCartItems()->isEmpty()) {
-            $this->addFlash('warning', 'Votre panier est vide.');
-            return $this->redirectToRoute('product_index');
-        }
+        try {
 
-        //Check stock before order 
-        foreach ($cart->getCartItems() as $cartItem) {
-            if ($cartItem->getQuantity() > $cartItem->getProduct()->getRemaining()) {
-                $this->addFlash(
-                    'error',
-                    'Stock insuffisant pour ' . $cartItem->getProduct()->getName()
-                );
+            $url = $checkoutService->checkout($user, $method);
+
+            if ($method === 'cod') {
+                $this->addFlash('success', 'Commande passée avec succès !');
                 return $this->redirectToRoute('user_profile');
             }
+
+            if ($method === 'stripe' && $url) {
+                return $this->redirect($url);
+            }
+
+            return $this->redirectToRoute('user_profile');
+
+        } catch (\Exception $e) {
+
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('user_profile');
         }
-
-        $order = new Order();
-        $order->setUser($user);
-        $order->setStatus('En attente');
-        $order->setCreatedAt(new \DateTime());
-
-        //Set user order number (1,2,3,..) for each user
-        $lastNumber = $orderRepo->getLastUserOrderNumber($user);
-        $order->setUserOrderNumber($lastNumber + 1);
-
-        $totalPrice = 0;
-
-        foreach ($cart->getCartItems() as $cartItem) {
-            $orderItem = new OrderItem();
-            $orderItem->setOrderRef($order);
-            $orderItem->setProduct($cartItem->getProduct());
-            $orderItem->setQuantity($cartItem->getQuantity());
-            $orderItem->setPrice($cartItem->getProduct()->getPrice());
-
-            $totalPrice += $cartItem->getProduct()->getPrice() * $cartItem->getQuantity();
-
-            $manager->persist($orderItem);
-        }
-
-        $order->setTotalPrice($totalPrice);
-
-        $manager->persist($order);
-
-        foreach ($cart->getCartItems() as $item) {
-            $manager->remove($item);
-        }
-
-        $manager->flush();
-
-        $this->addFlash('success', 'Commande passée avec succès !');
-
-        return $this->redirectToRoute('user_profile');
     }
 
     #[Route('/order/{id}/cancel', name: 'order_cancel')]

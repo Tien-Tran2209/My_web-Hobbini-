@@ -1,0 +1,69 @@
+/* TITLE */
+.dashboard-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: #7B8CD8;
+    margin-bottom: 25px;
+}
+
+/* STAT CARD */
+.stat-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #777;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: 900;
+    color: #7B8CD8;
+}
+
+/* SECTION */
+.section-box {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    margin-top: 25px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #7B8CD8;
+    margin-bottom: 18px;
+}
+
+/* TABLE */
+.table th {
+    font-size: 13px;
+    color: #666;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* STATUS BADGES */
+.badge-status {
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+}
+
+.pending { background: #f39c12; }
+.valid { background: #7B8CD8; }
+.shipped { background: #2ecc71; }
+.cancel { background: #e74c3c; }

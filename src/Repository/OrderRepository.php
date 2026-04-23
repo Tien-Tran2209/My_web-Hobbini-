@@ -52,4 +52,46 @@ class OrderRepository extends ServiceEntityRepository
 
         return $result ? (int)$result : 0;
     }
+
+    public function getTotalRevenue(): float
+    {
+        return (float) $this->createQueryBuilder('o')
+            ->select('SUM(o.total_price)')
+            ->where('o.status IN (:statuses)')
+            ->setParameter('statuses', ['Validé', 'Expédié'])
+            ->getQuery()
+            ->getSingleScalarResult() ?: 0;
+    }
+
+    public function countPendingOrders(): int
+    {
+        return $this->count([
+            'status' => 'En attente'
+        ]);
+    }
+
+    public function getLatestOrders(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('o')
+            ->orderBy('o.created_at', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getMonthlySales(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "
+            SELECT MONTH(created_at) as month,
+                SUM(total_price) as total
+            FROM `order`
+            WHERE status IN ('Validé', 'Expédié')
+            GROUP BY MONTH(created_at)
+            ORDER BY month ASC
+        ";
+
+        return $conn->executeQuery($sql)->fetchAllAssociative();
+    }
 }

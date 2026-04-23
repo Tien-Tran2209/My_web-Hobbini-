@@ -1,111 +1,15 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Gestion des commandes{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/styleOrder.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/order-index.css') }}">
 {% endblock %}
-
-{% block title %}Gestion des commandes{% endblock %}
 
 {% block body %}
 
-<style>
-    .page-title {
-        font-size: 26px;
-        font-weight: 800;
-        color: var(--primary, #7B8CD8);
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .table-container {
-        background: white;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th {
-        text-align: left;
-        padding: 12px;
-        font-size: 14px;
-        color: #555;
-        border-bottom: 2px solid #eee;
-    }
-
-    td {
-        padding: 12px;
-        font-size: 14px;
-        border-bottom: 1px solid #f1f1f1;
-        vertical-align: middle;
-    }
-
-    tr:hover {
-        background: #fafafa;
-    }
-
-    /* STATUS */
-    .status-select {
-        padding: 6px 10px;
-        border-radius: 8px;
-        border: none;
-        color: white;
-        font-weight: 600;
-        outline: none;
-        cursor: pointer;
-    }
-
-    .status-attente { background: #f39c12; }
-    .status-valide { background: #7B8CD8; }
-    .status-expedie { background: #2ecc71; }
-    .status-annule { background: #e74c3c; }
-
-    /* BADGES */
-    .badge {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-top: 5px;
-    }
-
-    .bg-danger { background: #e74c3c; color: white; }
-    .bg-dark { background: #333; color: white; }
-
-    /* BUTTONS */
-    .btn-link {
-        color: var(--primary, #7B8CD8);
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .btn-link:hover {
-        text-decoration: underline;
-    }
-
-    .btn-back {
-        display: inline-block;
-        margin-top: 15px;
-        background: #f2f2f2;
-        padding: 8px 12px;
-        border-radius: 10px;
-        color: #444;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .btn-back:hover {
-        background: #e0e0e0;
-    }
-</style>
-
-<h1 class="page-title text-center">
+<h1 class="page-title">
     📦 Gestion des commandes
 </h1>
 
@@ -121,6 +25,7 @@
                 <th>User</th>
                 <th>Date</th>
                 <th>Total</th>
+                <th>Méthode de paiement</th>
                 <th>Status</th>
                 <th>Détails</th>
             </tr>
@@ -138,6 +43,29 @@
                 <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
 
                 <td><strong>{{ order.totalPrice }} €</strong></td>
+
+                <td>
+                    {% if order.paymentMethod == 'stripe' %}
+                        💳 Carte bancaire
+                    {% elseif order.paymentMethod == 'cod' %}
+                        💵 À la livraison
+                    {% else %}
+                        ❓ Inconnu
+                    {% endif %}
+
+                    <br>
+
+                    <small>
+                        Paiement:
+                        {% if order.paymentStatus == 'paid' %}
+                            ✅ Payé
+                        {% elseif order.paymentStatus == 'pending' %}
+                            ⏳ En attente
+                        {% else %}
+                            ❌ Échoué
+                        {% endif %}
+                    </small>
+                </td>
 
                 <td>
 
@@ -189,5 +117,9 @@
 {% else %}
     <p>Aucune commande trouvée.</p>
 {% endif %}
+
+<div class="d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+</div>
 
 {% endblock %}

@@ -2,23 +2,35 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Order;
 use App\Repository\OrderRepository;
+use App\Service\OrderManagerService;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Order;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/admin/order')]
 class OrderController extends AbstractController
 {
     #[Route('/', name: 'admin_order_index')]
-    public function index(OrderRepository $orderRepo): Response
-    {
+    public function index(
+        OrderRepository $orderRepo,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $orders = $orderRepo->findBy([], ['created_at' => 'DESC']);
+        $query = $orderRepo->createQueryBuilder('o')
+            ->orderBy('o.created_at', 'DESC');
+
+        $orders = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
 
         return $this->render('admin/order/index.html.twig', [
             'orders' => $orders,
@@ -42,11 +54,13 @@ class OrderController extends AbstractController
     }
 
     #[Route('/{id}/update-status', name: 'admin_order_update_status', methods: ['POST'])]
-    public function updateStatus(Order $order, Request $request, EntityManagerInterface $em): Response
-    {
-       $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    public function updateStatus(
+        Order $order,
+        Request $request,
+        OrderManagerService $orderService
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $oldStatus = trim($order->getStatus());
         $newStatus = trim($request->request->get('status'));
 
         $allowedStatuses = [
@@ -60,58 +74,13 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('admin_order_index');
         }
 
-        if ($oldStatus !== 'Expédié' && $newStatus === 'Expédié') {
-
-            foreach ($order->getOrderItems() as $item) {
-
-                $product = $item->getProduct();
-
-                $remaining = $product->getRemaining();
-
-                $qty = $item->getQuantity();
-
-                if ($remaining < $qty) {
-                    $this->addFlash(
-                        'error',
-                        'Stock insuffisant pour ' . $product->getName()
-                    );
-
-                    return $this->redirectToRoute('admin_order_index');
-                }
-
-                $product->setSold(
-                    $product->getSold() + $qty
-                );
-            }
+        try {
+            $orderService->updateStatus($order, $newStatus);
+            $this->addFlash('success', 'Statut mis à jour avec succès.');
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
         }
-
-        if ($oldStatus === 'Expédié' && $newStatus !== 'Expédié') {
-
-            foreach ($order->getOrderItems() as $item) {
-
-                $product = $item->getProduct();
-
-                $qty = $item->getQuantity();
-
-                $newSold = $product->getSold() - $qty;
-
-                if ($newSold < 0) {
-                    $newSold = 0;
-                }
-
-                $product->setSold($newSold);
-            }
-        }
-
-        if ($newStatus === 'Annulé') {
-            $order->setCancelledBy('admin');
-        }
-
-        $order->setStatus($newStatus);
-
-        $em->flush();
 
         return $this->redirectToRoute('admin_order_index');
     }
 }
-

@@ -40,4 +40,22 @@ class ProductRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getTopSellingProducts(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.sold', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countOutOfStock(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.stock <= p.sold')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
