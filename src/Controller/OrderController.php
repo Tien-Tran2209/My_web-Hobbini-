@@ -57,7 +57,7 @@ class OrderController extends AbstractController
         }
 
         $order->setStatus('Annulé');
-        $order->setCancelledBy('client');
+        $order->setCancelledBy('user');
 
         $em->flush();
 

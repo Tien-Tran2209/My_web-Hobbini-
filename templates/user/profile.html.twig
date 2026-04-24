@@ -1,11 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/styleOrder.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
-{% endblock %}
-
 {% block title %}
 Profil de {{ user.email }}
 {% endblock %}
@@ -118,6 +112,14 @@ Profil de {{ user.email }}
                         {% if order.status == 'Annulé' %}status-annule{% endif %}
                     ">
                         {{ order.status }}
+
+                        {% if order.status == 'Annulé' %}
+                            {% if order.cancelledBy == 'admin' %}
+                                (Admin)
+                            {% elseif order.cancelledBy == 'user' %}
+                                (Vous)
+                            {% endif %}
+                        {% endif %}
                     </span>
 
                     {% if order.status == 'En attente' %}

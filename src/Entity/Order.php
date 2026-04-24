@@ -24,7 +24,7 @@ class Order
     private ?float $total_price = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $status = 'EN ATTENTE';
+    private ?string $status = 'En attente';
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $cancelledBy = null;

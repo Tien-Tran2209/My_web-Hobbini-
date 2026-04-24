@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\User;
 
 class OrderCheckoutService
 {
@@ -17,7 +18,7 @@ class OrderCheckoutService
         private OrderRepository $orderRepo
     ) {}
 
-    public function checkout(UserInterface $user, string $method): ?string
+    public function checkout(User $user, string $method): ?string
     {
         $cart = $user->getCart();
 
@@ -32,9 +33,7 @@ class OrderCheckoutService
             }
         }
 
-        /* =========================
-           💵 CASH ON DELIVERY
-        ==========================*/
+        /*💵 CASH ON DELIVERY*/
         if ($method === 'cod') {
 
             $order = new Order();
@@ -74,9 +73,7 @@ class OrderCheckoutService
             return null;
         }
 
-        /* =========================
-           💳 STRIPE PAYMENT
-        ==========================*/
+        /*💳 STRIPE PAYMENT*/
         if ($method === 'stripe') {
 
             Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);

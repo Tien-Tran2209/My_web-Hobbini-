@@ -2,39 +2,36 @@
 
 {% block title %}Liste des Produits{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/product-list.css') }}">
-{% endblock %}
-
 {% block body %}
 
-<div class="page-header">
+<div class="page-wrapper">
 
-    <div class="header-left">
-        <h1 class="page-title">📦 Liste des Produits</h1>
+    <div class="page-header">
+
+        <div class="header-left">
+            <h1 class="page-title">📦 Liste des Produits</h1>
+        </div>
+
+        <form method="get"
+              action="{{ path('product_index') }}"
+              class="filter-box">
+
+            <span class="filter-label">🔎 Filtrer :</span>
+
+            <select name="category" onchange="this.form.submit()">
+                <option value="">Tous les produits</option>
+
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}"
+                            {% if cat.id == selectedCategory %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </form>
+
     </div>
-
-    <form method="get"
-          action="{{ path('product_index') }}"
-          class="filter-box">
-
-        <span class="filter-label">🔎 Filtrer :</span>
-
-        <select name="category" onchange="this.form.submit()">
-            <option value="">Tous les produits</option>
-
-            {% for cat in categories %}
-                <option value="{{ cat.id }}"
-                        {% if cat.id == selectedCategory %}selected{% endif %}>
-                    {{ cat.name }}
-                </option>
-            {% endfor %}
-        </select>
-
-    </form>
-
-</div>
 
 {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('admin_product_new') }}" class="btn-custom">➕ Ajouter Produit</a>
