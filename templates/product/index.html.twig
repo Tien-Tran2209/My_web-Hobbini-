@@ -61,18 +61,20 @@
                     {% if is_granted('ROLE_ADMIN') %}
                         <span>Vendu: {{ product.sold }}</span>
                     {% else %}
-                        <span>Disponible: {{ product.remaining }}</span>
-                    {% endif %}
+                        {% set total = product.sold + product.remaining %}
+                        {% set percent = total > 0 ? (product.sold / total * 100) : 0 %}
 
-                    <span>
                         {% if product.remaining == 0 %}
                             <span class="badge badge-danger">Rupture</span>
-                        {% elseif product.sold > 20 %}
-                            <span class="badge badge-hot">🔥 Hot</span>
                         {% else %}
-                            <span class="badge badge-success">Stock</span>
+                            <span class="badge badge-success">Disponible</span>
                         {% endif %}
-                    </span>
+
+                         {% if percent >= 70 %}
+                            <span class="badge badge-hot">🔥 Hot</span>
+                        {% endif %}
+
+                    {% endif %}
 
                 </div>
 
