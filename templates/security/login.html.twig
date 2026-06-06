@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Connecter{% endblock %}
 
 {% block body %}
 
@@ -14,9 +14,9 @@
                     <img src="{{ asset('images/logo-hobbini.png') }}" class="auth-logo" alt="logo">
                 </div>
 
-                <h3 class="text-center mb-2">Welcome Back</h3>
+                <h3 class="text-center mb-2">Bienvenue</h3>
                 <p class="text-center auth-subtitle mb-4">
-                    Login to continue your journey 🌿
+                    Connectez-vous pour poursuivre votre voyage 🌿
                 </p>
 
                 {% if error %}
@@ -28,21 +28,21 @@
                 <form method="post">
 
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">E-mail</label>
                         <input type="email"
                                value="{{ last_username }}"
                                name="email"
                                class="form-control"
-                               placeholder="Enter your email"
+                               placeholder="Entrez votre adresse e-mail"
                                required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
+                        <label class="form-label">Mot de passe</label>
                         <input type="password"
                                name="password"
                                class="form-control"
-                               placeholder="Enter your password"
+                               placeholder="Entrez votre mot de passe"
                                required>
                     </div>
 
@@ -50,19 +50,19 @@
 
                     <div class="form-check mb-3">
                         <input type="checkbox" name="_remember_me" class="form-check-input">
-                        <label class="form-check-label">Remember me</label>
+                        <label class="form-check-label">Se souvenir de moi</label>
                     </div>
 
                     <button class="btn btn-auth w-100">
-                        Login
+                        Se connecter
                     </button>
 
                 </form>
 
                 <div class="text-center mt-3">
                     <small class="text-muted">
-                        Don’t have an account?
-                        <a href="{{ path('app_register') }}" class="auth-link">Register</a>
+                        Vous n'avez pas de compte ?
+                        <a href="{{ path('app_register') }}" class="auth-link">S'inscrire</a>
                     </small>
                 </div>
 

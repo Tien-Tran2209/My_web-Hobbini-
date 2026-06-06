@@ -1,0 +1,86 @@
+/* =========================
+   ADMIN MODE
+========================= */
+
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: #111827;
+}
+
+.sidebar a {
+    color: #d1d5db;
+    text-decoration: none;
+    display: block;
+    padding: 14px 20px;
+    transition: 0.2s;
+}
+
+.sidebar a:hover {
+    background-color: #1f2937;
+    color: white;
+}
+
+.admin-content {
+    flex-grow: 1;
+    padding: 30px;
+}
+
+.admin-navbar {
+    background-color: #1e293b;
+}
+
+.dashboard-card {
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.admin-mode {
+    background-color: #f1f5f9 !important;
+}
+
+/* Navbar */
+
+.admin-mode .navbar {
+    background: #111827 !important;
+}
+
+/* Footer */
+
+.admin-mode footer {
+    background: #111827 !important;
+}
+
+/* Product cards */
+
+.admin-mode .product-card {
+    border: 1px solid #d1d5db;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Buttons admin */
+
+.admin-mode .btn-custom,
+.admin-mode .btn-view {
+    background-color: #111827 !important;
+    color: white !important;
+    border: none;
+}
+
+.admin-mode .btn-custom:hover,
+.admin-mode .btn-view:hover {
+    background-color: #1f2937 !important;
+}
+
+/* Badges */
+
+.admin-mode .badge-hot {
+    background-color: #dc2626;
+}
+
+/* Header */
+
+.admin-mode .page-title {
+    color:#7B8CD8;
+}

@@ -97,7 +97,13 @@ Le projet a pour objectif de mettre en pratique :
 | MySQL | Base de données relationnelle |
 | PHPUnit 13 | Tests automatisés |
 | Stripe API | Paiement |
+| JWT | Authentification API |
+| Swagger / OpenAPI | Documentation API |
 | Git & GitHub | Versioning |
+| Redis | Cache NoSQL |
+| MongoDB | Base NoSQL |
+| Docker | Conteneurisation |
+| Docker Compose | Orchestration containers |
 
 # Architecture du Projet
 
@@ -175,6 +181,47 @@ Le projet contient également une API REST développée avec Symfony.
 - Routing API
 - REST architecture
 - Serialization JSON
+
+---
+# Sécurisation API JWT
+
+L’API REST du projet est sécurisée avec JWT (JSON Web Token).
+
+## Fonctionnalités
+
+* authentification API sécurisée
+* génération de token JWT
+* accès protégé aux endpoints sensibles
+* gestion des rôles utilisateurs
+* sécurité stateless
+
+---
+
+## Authentification
+
+### Endpoint login
+
+```http
+POST /api/login_check
+```
+
+---
+
+## Exemple de réponse JWT
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+---
+
+## Utilisation du token
+
+```http
+Authorization: Bearer TOKEN
+```
 
 ---
 
@@ -384,6 +431,23 @@ Gestion du stock :
 - persistance base de données
 
 ---
+## Cache Redis
+
+Le projet utilise Redis afin d’optimiser les performances.
+
+### Fonctionnalités mises en cache
+
+- liste des produits
+- pagination produits
+- filtrage catégories
+
+### Avantages
+
+* réduction des requêtes SQL
+* amélioration des performances
+* optimisation du temps de réponse
+
+---
 
 # Sécurité
 
@@ -485,18 +549,110 @@ git add .
 git commit -m "message"
 git push origin main
 ```
+---
+# Documentation API Swagger
+
+Le projet utilise Swagger / OpenAPI afin de documenter automatiquement les endpoints API.
+
+## Accès Swagger UI
+
+```text
+http://localhost:8000/api/doc
+```
+
+---
+
+## Avantages
+
+- documentation interactive
+- test des endpoints
+- visualisation des routes API
+- préparation intégration frontend/mobile
+
+---
+# Docker & Conteneurisation
+
+Le projet a été conteneurisé avec Docker afin de faciliter :
+
+- le déploiement
+- la portabilité
+- la reproductibilité de l’environnement
+- l’isolation des services
+
+Le projet utilise :
+
+- Docker
+- Docker Compose
+
+## Services Docker
+
+| Service | Description           |
+| ------- | --------------------- |
+| app     | Application Symfony   |
+| mysql   | Base de données MySQL |
+| redis   | Cache Redis           |
+| mongo   | Base NoSQL MongoDB    |
+
+---
+
+## Lancer le projet avec Docker
+
+```bash
+docker compose up
+```
+
+Application disponible sur :
+
+```text
+http://localhost:8000
+```
+
+---
+# Variables d’Environnement
+
+Le projet utilise des variables d’environnement pour la configuration.
+
+## Exemple `.env`
+
+```env
+APP_ENV=dev
+
+DATABASE_URL="mysql://root:root@mysql:3306/hobbini?serverVersion=8.0"
+
+REDIS_URL=redis://redis:6379
+
+MONGODB_URL=mongodb://mongo:27017
+```
+
+Ces variables permettent :
+
+- la connexion à MySQL
+- l’utilisation du cache Redis
+- la connexion MongoDB
+- la configuration de l’environnement Symfony
+
+---
+# MongoDB
+
+Le projet intègre également MongoDB comme base NoSQL.
+
+MongoDB est utilisé pour préparer l’évolution du projet vers :
+
+- logs applicatifs
+- analytics
+- recommandations produits
+- données non relationnelles
+
+Cette intégration permet de démontrer l’utilisation d’une architecture hybride SQL / NoSQL.
 
 ---
 
 # Améliorations Futures
 
 - Déploiement
-- API sécurisée avec JWT
-- Swagger / OpenAPI
 - Notifications email
 - Facture PDF
 - Recherche avancée
-- Dockerisation
 - CI/CD
 - Wishlist
 - Système d’avis clients
@@ -516,22 +672,45 @@ Projet académique Symfony 7.
 
 # Conclusion
 
-Hobbini est une application e-commerce complète développée avec Symfony 7 mettant en œuvre :
+Hobbini est une application e-commerce complète développée avec Symfony 7 mettant en œuvre une architecture moderne et professionnelle.
+
+Le projet intègre :
 
 - Architecture MVC
 - Doctrine ORM
 - Twig
 - Symfony Security
-- Services métier
 - API REST
+- Authentification JWT
+- Documentation Swagger / OpenAPI
 - Paiement Stripe
+- Services métier Symfony
 - Tests automatisés
+- Cache Redis
+- Architecture SQL / NoSQL
+- Docker et Docker Compose
+
+L’application permet de gérer :
+
+- l’authentification utilisateur
+- la gestion des produits
+- le panier d’achat
+- les commandes
+- les paiements
+- l’administration du stock
+- les statistiques commerciales
+- les endpoints API sécurisés
 
 Le projet a permis de renforcer les compétences en :
 
-- développement backend Symfony
-- gestion de base de données
+- développement backend avec Symfony
 - architecture logicielle
-- sécurité web
+- conception API REST
+- sécurité web et JWT
+- gestion de base de données relationnelle et NoSQL
+- optimisation des performances avec Redis
 - tests automatisés
-- développement API REST 
+- conteneurisation Docker
+- préparation au déploiement d’une application professionnelle
+
+Cette application constitue une base solide pour une évolution vers une plateforme e-commerce scalable et déployable en environnement de production.

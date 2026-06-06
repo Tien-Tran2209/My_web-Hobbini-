@@ -13,8 +13,11 @@
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",
         "knplabs/knp-paginator-bundle": "^6.10",
+        "lexik/jwt-authentication-bundle": "^3.2",
+        "nelmio/api-doc-bundle": "^5.10",
         "phpdocumentor/reflection-docblock": "^6.0",
         "phpstan/phpdoc-parser": "^2.3",
+        "predis/predis": "^3.5",
         "stripe/stripe-php": "^20.0",
         "symfony/asset": "7.4.*",
         "symfony/asset-mapper": "7.4.*",
@@ -48,7 +51,8 @@
         "symfony/yaml": "7.4.*",
         "symfonycasts/verify-email-bundle": "^1.18",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "zircote/swagger-php": "^6.1"
     },
     "config": {
         "allow-plugins": {

@@ -76,7 +76,15 @@ class OrderController extends AbstractController
 
         try {
             $orderService->updateStatus($order, $newStatus);
-            $this->addFlash('success', 'Statut mis à jour avec succès.');
+            $message = match ($newStatus) {
+                'En attente' => 'Commande remise en attente.',
+                'Validé' => 'Commande validée avec succès.',
+                'Expédié' => 'Commande marquée comme expédiée.',
+                'Annulé' => 'Commande annulée.',
+                default => 'Statut mis à jour.'
+            };
+
+            $this->addFlash('success', $message);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

@@ -14,9 +14,9 @@
                     <img src="{{ asset('images/logo-hobbini.png') }}" class="auth-logo" alt="logo">
                 </div>
 
-                <h3 class="text-center mb-2">Create Account</h3>
+                <h3 class="text-center mb-2">Créer un compte</h3>
                 <p class="text-center auth-subtitle mb-4">
-                    Join Hobbini and start your journey today 🚀
+                    Rejoignez Hobbini et commencez votre voyage dès aujourd'hui 🚀
                 </p>
 
                 {% for flash_error in app.flashes('verify_email_error') %}
@@ -27,34 +27,35 @@
 
                     <div class="mb-3">
                         {{ form_row(registrationForm.email, {
+                            label: 'E-mail',
                             label_attr: { class: 'form-label' },
-                            attr: { class: 'form-control', placeholder: 'Enter your email' }
+                            attr: { class: 'form-control', placeholder: 'Entrez votre adresse e-mail' }
                         }) }}
                     </div>
 
                     <div class="mb-3">
                         {{ form_row(registrationForm.plainPassword, {
-                            label: 'Password',
+                            label: 'Mot de passe',
                             label_attr: { class: 'form-label' },
-                            attr: { class: 'form-control', placeholder: 'Enter your password' }
+                            attr: { class: 'form-control', placeholder: 'Entrez votre mot de passe' }
                         }) }}
                     </div>
 
                     <div class="form-check mb-3">
                         {{ form_widget(registrationForm.agreeTerms, { attr: { class: 'form-check-input' } }) }}
-                        {{ form_label(registrationForm.agreeTerms, null, { label_attr: { class: 'form-check-label' } }) }}
+                        {{ form_label(registrationForm.agreeTerms, "J’accepte les conditions d’utilisation", { label_attr: { class: 'form-check-label' } }) }}
                     </div>
 
                     <button type="submit" class="btn btn-auth w-100">
-                        Register
+                        S'inscrire
                     </button>
 
                 {{ form_end(registrationForm) }}
 
                 <div class="text-center mt-3">
                     <small class="text-muted">
-                        Already have an account?
-                        <a href="{{ path('app_login') }}" class="auth-link">Login</a>
+                        Vous avez déjà un compte ?
+                        <a href="{{ path('app_login') }}" class="auth-link">Se connecter</a>
                     </small>
                 </div>
 

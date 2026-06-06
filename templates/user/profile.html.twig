@@ -8,23 +8,174 @@ Profil de {{ user.email }}
 
 <div class="profile-container">
 
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="flash-msg {% if label == 'success' %}flash-success{% else %}flash-error{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-msg {% if label == 'success' %}flash-success{% else %}flash-error{% endif %}">
+            {{ message }}
+        </div>
     {% endfor %}
+{% endfor %}
 
-    <h1 class="page-title">
-        👋 Bonjour, {{ user.email|split('@')[0] }}
-    </h1>
+<h1 class="page-title">
+    👋 Bonjour, {{ user.email|split('@')[0] }}
+</h1>
 
-    <!-- CART -->
-    <div class="card-box">
-        <div class="card-title">🛒 Votre panier</div>
+<!-- CART -->
+<div class="card-box">
+    <div class="card-title">🛒 Votre panier</div>
 
-        {% if cart and cart.cartItems|length > 0 %}
+    {% if cart and cart.cartItems|length > 0 %}
+        <table>
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix</th>
+                <th>Total</th>
+                <th>Supprimer</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% set totalCartPrice = 0 %}
+
+            {% for item in cart.cartItems %}
+                {% set totalItemPrice = item.quantity * item.product.price %}
+                {% set totalCartPrice = totalCartPrice + totalItemPrice %}
+
+                <tr>
+                    <td>
+                        <img src="{{ asset(item.product.imageUrl) }}"
+                             alt="{{ item.product.name }}"
+                             style="width:60px;">
+                    </td>
+
+                    <td>{{ item.product.name }}</td>
+
+                    <td>
+                        <div class="qty-actions">
+                            <a href="{{ path('cart_decrease', {id: item.id}) }}" class="qty-btn">−</a>
+                            <span class="qty-number">{{ item.quantity }}</span>
+                            <a href="{{ path('cart_increase', {id: item.id}) }}" class="qty-btn">+</a>
+                        </div>
+                    </td>
+
+                    <td>{{ item.product.price }} €</td>
+                    <td><strong>{{ totalItemPrice }} €</strong></td>
+
+                    <td>
+                        <a href="{{ path('cart_remove', {id: item.id}) }}"
+                           class="btn-custom btn-danger">🗑</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-box">
+            Total Panier: {{ totalCartPrice }} €
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <a href="{{ path('checkout', {method:'cod'}) }}"
+               class="btn-custom btn-primary">
+                💵 Paiement à la livraison
+            </a>
+
+            <a href="{{ path('checkout', {method:'stripe'}) }}"
+               class="btn-custom btn-light">
+                💳 Carte bancaire
+            </a>
+        </div>
+
+    {% else %}
+        <p style="color:#777;">Votre panier est vide.</p>
+    {% endif %}
+</div>
+
+<!-- ORDERS -->
+<div class="card-box">
+    <div class="card-title">📦 Vos commandes</div>
+
+    {% if orders|length > 0 %}
+
+        {% for order in orders %}
+
+            <div style="margin-bottom: 15px; font-weight: 800;">
+
+                Commande #{{ order.userOrderNumber }} - {{ order.createdAt|date('d/m/Y H:i') }}
+
+                 {% if order.status == 'Annulé' %}
+                    <div style="margin-top:5px;">
+
+                        {% if order.cancelledBy == 'admin' %}
+                            <small style="color:#666;">Annulé par admin</small>
+
+                        {% elseif order.cancelledBy == 'user' %}
+                            <small style="color:#666;">Annulé par vous</small>
+                        {% endif %}
+
+                    </div>
+                {% endif %}
+
+                {% if order.status == 'En attente' %}
+                    <div style="margin-top:10px;">
+                        <a href="{{ path('order_cancel', {id: order.id}) }}"
+                           class="btn-custom btn-danger"
+                           onclick="return confirm('Annuler ?')">
+                            Annuler
+                        </a>
+                    </div>
+                {% endif %}
+
+                <div class="order-status-wrapper">
+
+                    <span class="status-badge
+                        {% if order.status == 'En attente' %}status-attente{% endif %}
+                        {% if order.status == 'Validé' %}status-valide{% endif %}
+                        {% if order.status == 'Expédié' %}status-expedie{% endif %}
+                        {% if order.status == 'Annulé' %}status-annule{% endif %}
+                    ">
+                        {% if order.status == 'En attente' %}
+                            En attente
+                        {% elseif order.status == 'Validé' %}
+                            Validé
+                        {% elseif order.status == 'Expédié' %}
+                            Expédié
+                        {% elseif order.status == 'Annulé' %}
+                            Annulé
+                        {% endif %}
+                    </span>
+
+                    <span class="order-message">
+
+                        {% if order.status == 'En attente' %}
+                            ⏳ Votre commande est en attente de validation.
+
+                        {% elseif order.status == 'Validé' %}
+
+                            {% if order.paymentMethod == 'cod' %}
+                                ✅ Votre commande a été validée.
+                                Paiement à la livraison.
+                            {% else %}
+                                ✅ Paiement confirmé.
+                                Préparation de votre commande.
+                            {% endif %}
+
+                        {% elseif order.status == 'Expédié' %}
+                            🚚 Votre commande est en cours de livraison.
+
+                        {% elseif order.status == 'Annulé' %}
+                            ❌ Cette commande a été annulée.
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
             <table>
                 <thead>
                 <tr>
@@ -33,16 +184,15 @@ Profil de {{ user.email }}
                     <th>Quantité</th>
                     <th>Prix</th>
                     <th>Total</th>
-                    <th>Supprimer</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                {% set totalCartPrice = 0 %}
+                {% set totalOrderPrice = 0 %}
 
-                {% for item in cart.cartItems %}
-                    {% set totalItemPrice = item.quantity * item.product.price %}
-                    {% set totalCartPrice = totalCartPrice + totalItemPrice %}
+                {% for item in order.orderItems %}
+                    {% set itemTotal = item.quantity * item.product.price %}
+                    {% set totalOrderPrice = totalOrderPrice + itemTotal %}
 
                     <tr>
                         <td>
@@ -52,128 +202,25 @@ Profil de {{ user.email }}
                         </td>
 
                         <td>{{ item.product.name }}</td>
-
-                        <td>
-                            <div class="qty-actions">
-                                <a href="{{ path('cart_decrease', {id: item.id}) }}" class="qty-btn">−</a>
-                                <span class="qty-number">{{ item.quantity }}</span>
-                                <a href="{{ path('cart_increase', {id: item.id}) }}" class="qty-btn">+</a>
-                            </div>
-                        </td>
-
+                        <td>{{ item.quantity }}</td>
                         <td>{{ item.product.price }} €</td>
-                        <td><strong>{{ totalItemPrice }} €</strong></td>
-
-                        <td>
-                            <a href="{{ path('cart_remove', {id: item.id}) }}"
-                               class="btn-custom btn-danger">🗑</a>
-                        </td>
+                        <td><strong>{{ itemTotal }} €</strong></td>
                     </tr>
+
                 {% endfor %}
                 </tbody>
             </table>
 
             <div class="total-box">
-                Total Panier: {{ totalCartPrice }} €
+                Total Commande: {{ totalOrderPrice }} €
             </div>
 
-            <div class="d-flex gap-2 mt-3">
-                <a href="{{ path('checkout', {method:'cod'}) }}"
-                   class="btn-custom btn-primary">
-                    💵 Paiement à la livraison
-                </a>
+        {% endfor %}
 
-                <a href="{{ path('checkout', {method:'stripe'}) }}"
-                   class="btn-custom btn-light">
-                    💳 Carte bancaire
-                </a>
-            </div>
-
-        {% else %}
-            <p style="color:#777;">Votre panier est vide.</p>
-        {% endif %}
-    </div>
-
-    <!-- ORDERS -->
-    <div class="card-box">
-        <div class="card-title">📦 Vos commandes</div>
-
-        {% if orders|length > 0 %}
-
-            {% for order in orders %}
-
-                <div style="margin-bottom: 15px; font-weight: 800;">
-                    Commande #{{ order.userOrderNumber }} - {{ order.createdAt|date('d/m/Y H:i') }}
-
-                    <span class="status-badge
-                        {% if order.status == 'En attente' %}status-attente{% endif %}
-                        {% if order.status == 'Validé' %}status-valide{% endif %}
-                        {% if order.status == 'Expédié' %}status-expedie{% endif %}
-                        {% if order.status == 'Annulé' %}status-annule{% endif %}
-                    ">
-                        {{ order.status }}
-
-                        {% if order.status == 'Annulé' %}
-                            {% if order.cancelledBy == 'admin' %}
-                                (Admin)
-                            {% elseif order.cancelledBy == 'user' %}
-                                (Vous)
-                            {% endif %}
-                        {% endif %}
-                    </span>
-
-                    {% if order.status == 'En attente' %}
-                        <a href="{{ path('order_cancel', {id: order.id}) }}"
-                           class="btn-custom btn-danger"
-                           onclick="return confirm('Annuler ?')">
-                            Annuler
-                        </a>
-                    {% endif %}
-                </div>
-
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Produit</th>
-                        <th>Quantité</th>
-                        <th>Prix</th>
-                        <th>Total</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {% set totalOrderPrice = 0 %}
-
-                    {% for item in order.orderItems %}
-                        {% set itemTotal = item.quantity * item.product.price %}
-                        {% set totalOrderPrice = totalOrderPrice + itemTotal %}
-
-                        <tr>
-                            <td>
-                                <img src="{{ asset(item.product.imageUrl) }}"
-                                     alt="{{ item.product.name }}"
-                                     style="width:60px;">
-                            </td>
-                            <td>{{ item.product.name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ item.product.price }} €</td>
-                            <td><strong>{{ itemTotal }} €</strong></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="total-box">
-                    Total Commande: {{ totalOrderPrice }} €
-                </div>
-
-            {% endfor %}
-
-        {% else %}
-            <p style="color:#777;">Vous n'avez pas encore de commandes.</p>
-        {% endif %}
-    </div>
+    {% else %}
+        <p style="color:#777;">Vous n'avez pas encore de commandes.</p>
+    {% endif %}
+</div>
 
 </div>
 

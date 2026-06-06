@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
 {% block title %}Modifier Produit{% endblock %}
 
@@ -23,12 +23,12 @@
     <div class="form-grid">
 
         <div class="form-group">
-            {{ form_label(form.name) }}
+            {{ form_label(form.name, "Nom") }}
             {{ form_widget(form.name) }}
         </div>
 
         <div class="form-group">
-            {{ form_label(form.price) }}
+            {{ form_label(form.price, "Prix") }}
             {{ form_widget(form.price) }}
             {% for error in form.price.vars.errors %}
                 <div class="text-danger small mt-1">
@@ -38,22 +38,22 @@
         </div>
 
         <div class="form-group">
-            {{ form_label(form.image_url) }}
+            {{ form_label(form.image_url, "URL de l'image") }}
             {{ form_widget(form.image_url) }}
         </div>
 
         <div class="form-group">
-            {{ form_label(form.category) }}
+            {{ form_label(form.category, "Catégorie") }}
             {{ form_widget(form.category) }}
         </div>
 
         <div class="form-group">
-            {{ form_label(form.stock) }}
+            {{ form_label(form.stock, "Stock") }}
             {{ form_widget(form.stock) }}
         </div>
 
         <div class="form-group full">
-            {{ form_label(form.description) }}
+            {{ form_label(form.description, "Description") }}
             {{ form_widget(form.description, {'attr': {'rows': 4}}) }}
         </div>
 

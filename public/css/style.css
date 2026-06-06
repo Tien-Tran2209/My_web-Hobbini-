@@ -19,7 +19,6 @@ body {
         radial-gradient(circle at 90% 20%, #dfe4ff 0%, transparent 35%),
         linear-gradient(180deg, #f7f8ff 0%, #eef1ff 100%);
 }
-
 /* MAIN CONTENT */
 .content::before {
     content: "";

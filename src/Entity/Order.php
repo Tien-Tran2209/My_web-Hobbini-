@@ -173,4 +173,35 @@ class Order
         $this->paymentStatus = $paymentStatus;
         return $this;
     }
+
+    public function isPaid(): bool
+    {
+        return $this->paymentStatus === 'paid';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->paymentStatus === 'pending';
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === 'Annulé';
+    }
+
+    public function isDelivered(): bool
+    {
+        return $this->status === 'Expédié';
+    }
+
+    public function getStatusLabel(): string
+    {
+        return match ($this->status) {
+            'En attente' => '⏳ En attente',
+            'Validé' => '✅ Validé',
+            'Expédié' => '🚚 Expédié',
+            'Annulé' => '❌ Annulé',
+            default => $this->status,
+        };
+    }
 }

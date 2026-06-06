@@ -3,10 +3,8 @@
     --logo-text-color: #7B8CD8;
 }
 
-html, body {
-    height: 100%;
-    font-family: "Segoe UI", sans-serif;
-    background: #f6f8fc;
+html {
+    background: transparent;
 }
 
 body {
@@ -20,6 +18,12 @@ body {
         linear-gradient(180deg, #f7f8ff 0%, #eef1ff 100%);
 }
 
+body.admin-mode {
+    background:
+        radial-gradient(circle at 20% 20%, #2b2f55 0%, transparent 50%),
+        radial-gradient(circle at 80% 30%, #1c1f3a 0%, transparent 45%),
+        linear-gradient(180deg, #141625 0%, #0f111d 100%);
+}
 /* MAIN CONTENT */
 .content::before {
     content: "";

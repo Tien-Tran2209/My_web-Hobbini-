@@ -201,3 +201,45 @@ img {
         padding: 8px 12px;
     }
 }
+
+.order-status-wrapper{
+    margin-top:8px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+}
+
+.status-badge{
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    color:white;
+    flex:0 0 auto;
+}
+
+.order-message{
+    font-size:14px;
+    font-weight:500;
+    color:#475569;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+    flex:1;
+}
+
+.order-message:hover{
+    white-space:normal;
+    background:#fff;
+    padding:6px 8px;
+    border-radius:8px;
+    position:relative;
+    z-index:2;
+}
+

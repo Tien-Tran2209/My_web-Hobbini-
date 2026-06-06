@@ -1,0 +1,21 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Hobbini API
+            description: API documentation for Hobbini project
+            version: 1.0.0
+
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+
+        security:
+            - Bearer: []
+
+    areas:
+        default:
+            path_patterns:
+                - ^/api
