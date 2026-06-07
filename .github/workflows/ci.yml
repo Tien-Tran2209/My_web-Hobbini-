@@ -25,50 +25,32 @@ jobs:
           --health-retries=10
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.4
           extensions: mbstring, intl, pdo_mysql
-          coverage: none
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
-
-      - name: Install npm dependencies
-        run: npm install
-
-      - name: Build assets (Webpack Encore)
-        run: npm run build
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
 
       - name: Set environment variables
         run: |
           echo "APP_ENV=test" >> $GITHUB_ENV
-          echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/hobbini_test?serverVersion=8.0&charset=utf8mb4" >> $GITHUB_ENV
+          echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/hobbini_test" >> $GITHUB_ENV
 
       - name: Wait for MySQL
         run: |
-          sudo apt-get update
-          sudo apt-get install -y default-mysql-client
           for i in {1..30}; do
-            mysqladmin ping -h 127.0.0.1 -uroot -proot --silent && break
+            mysqladmin ping -h 127.0.0.1 -uroot -proot && break
             echo "Waiting for MySQL..."
             sleep 2
           done
 
-      - name: Create database
-        run: php bin/console doctrine:database:create --if-not-exists --env=test
-
       - name: Run migrations
         run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
-      - name: Run PHPUnit tests
+      - name: Run tests
         run: php bin/phpunit
