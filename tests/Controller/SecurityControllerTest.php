@@ -15,7 +15,7 @@ class SecurityControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertSelectorTextContains('h3', 'Welcome Back');
+        $this->assertSelectorTextContains('h3', 'Bienvenue');
     }
 
     public function testAnonymousUserCannotAccessAdminDashboard(): void

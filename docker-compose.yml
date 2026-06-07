@@ -12,6 +12,11 @@ services:
       - mysql
       - redis
       - mongo
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      DATABASE_URL: mysql://root:root@mysql:3306/hobbini
+      REDIS_URL: redis://redis:6379
+      MONGODB_URL: mongodb://mongo:27017
 
   mysql:
     image: mysql:8.0
@@ -24,6 +29,18 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  mysql_test:
+    image: mysql:8.0
+    container_name: hobbini_mysql_test
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hobbini_test
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_test_data:/var/lib/mysql
 
   redis:
     image: redis:7
@@ -41,4 +58,5 @@ services:
 
 volumes:
   mysql_data:
+  mysql_test_data:
   mongo_data:
