@@ -27,22 +27,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 1. PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.4
           extensions: mbstring, intl, pdo_mysql
 
+      # 2. Composer FIRST
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction
 
+      # 3. Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Build assets
+        run: npm run build
+
+      # 4. Env
       - name: Set environment variables
         run: |
           echo "APP_ENV=test" >> $GITHUB_ENV
           echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/hobbini_test?serverVersion=8.0" >> $GITHUB_ENV
 
+      # 5. DB
       - name: Run migrations
         run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
+      # 6. Tests
       - name: Run tests
         run: php bin/phpunit
