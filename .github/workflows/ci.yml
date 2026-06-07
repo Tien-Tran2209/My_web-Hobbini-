@@ -22,7 +22,7 @@ jobs:
           --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=20
+          --health-retries=30
 
     steps:
       - uses: actions/checkout@v4
@@ -44,20 +44,20 @@ jobs:
       - name: Install Node dependencies
         run: npm install
 
-      - name: Build assets
+      - name: Build assets (Webpack Encore)
         run: npm run build
 
       # Composer
-      - name: Install Composer dependencies
+      - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      # ENV for test
+      # ENV TEST
       - name: Set environment variables
         run: |
           echo "APP_ENV=test" >> $GITHUB_ENV
           echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/hobbini_test?serverVersion=8.0&charset=utf8mb4" >> $GITHUB_ENV
 
-      # Wait MySQL ready (IMPORTANT)
+      # WAIT MYSQL READY (QUAN TRỌNG)
       - name: Wait for MySQL
         run: |
           for i in {1..40}; do
@@ -67,10 +67,10 @@ jobs:
           done
           echo "MySQL not ready" && exit 1
 
-      # DB schema
+      # DB SCHEMA
       - name: Create database schema
         run: php bin/console doctrine:schema:create --env=test -n
 
-      # Run tests
+      # RUN TESTS
       - name: Run PHPUnit
         run: php bin/phpunit
