@@ -44,8 +44,13 @@ jobs:
       - name: Install Node dependencies
         run: npm install
 
-      - name: Build assets (Webpack Encore)
-        run: npm run build
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: |
+          npm run build
+          ls -la public/build
 
       # Composer
       - name: Install dependencies
