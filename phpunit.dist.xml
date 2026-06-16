@@ -19,8 +19,6 @@
 
         <server name="APP_SECRET" value="test_secret_123" force="true" />
 
-        <server name="DATABASE_URL" value="mysql://root:root@127.0.0.1:3307/hobbini_test" force="true" />
-
         <server name="REDIS_URL" value="redis://127.0.0.1:6379" force="true" />
 
         <server name="DEFAULT_URI" value="http://localhost" force="true" />
