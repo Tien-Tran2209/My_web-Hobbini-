@@ -10,6 +10,10 @@ jobs:
   symfony-tests:
     runs-on: ubuntu-latest
 
+    env:
+      APP_ENV: test
+      DATABASE_URL: "mysql://root:root@127.0.0.1:3306/hobbini_test?serverVersion=8.0&charset=utf8mb4"
+
     services:
       mysql:
         image: mysql:8.0
@@ -25,7 +29,8 @@ jobs:
           --health-retries=30
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       # PHP
       - name: Setup PHP
@@ -35,7 +40,7 @@ jobs:
           extensions: mbstring, intl, pdo_mysql
           coverage: none
 
-      # Node
+      # Node.js
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -45,21 +50,13 @@ jobs:
         run: npm ci
 
       - name: Build assets
-        run: |
-          npm run build
-          ls -la public/build
+        run: npm run build
 
       # Composer
-      - name: Install dependencies
+      - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      # ENV TEST
-      - name: Set environment variables
-        run: |
-          echo "APP_ENV=test" >> $GITHUB_ENV
-          echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/hobbini_test?serverVersion=8.0&charset=utf8mb4" >> $GITHUB_ENV
-
-      # WAIT MYSQL READY (QUAN TRỌNG)
+      # Wait for MySQL
       - name: Wait for MySQL
         run: |
           for i in {1..40}; do
@@ -67,16 +64,26 @@ jobs:
             echo "Waiting MySQL..."
             sleep 2
           done
-          echo "MySQL not ready" && exit 1
+          echo "MySQL not ready"
+          exit 1
 
-      # DB SCHEMA
+      # Debug
+      - name: Show APP_ENV
+        run: php -r "echo 'APP_ENV='.getenv('APP_ENV').PHP_EOL;"
+
+      - name: Show DATABASE_URL
+        run: php -r "echo 'DATABASE_URL='.getenv('DATABASE_URL').PHP_EOL;"
+
+      - name: Symfony About
+        run: php bin/console about --env=test
+
+      # Database
       - name: Create database schema
         run: php bin/console doctrine:schema:create --env=test -n
 
-      # RUN TESTS
-      - name: Debug DB
-        run: |
-          php bin/console doctrine:query:sql "SHOW TABLES" --env=test
+      - name: Validate Doctrine schema
+        run: php bin/console doctrine:schema:validate --env=test
 
+      # Tests
       - name: Run PHPUnit
-        run: php bin/phpunit
+        run: APP_ENV=test php bin/phpunit
