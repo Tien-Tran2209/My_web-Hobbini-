@@ -12,6 +12,7 @@ jobs:
 
     env:
       APP_ENV: test
+      APP_DEBUG: 0
       DATABASE_URL: "mysql://root:root@127.0.0.1:3306/hobbini_test?serverVersion=8.0&charset=utf8mb4"
 
     services:
@@ -56,6 +57,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Clear cache safely
+        run: php bin/console cache:clear --env=test --no-warmup || true
+
       # Wait for MySQL
       - name: Wait for MySQL
         run: |
@@ -86,4 +90,4 @@ jobs:
 
       # Tests
       - name: Run PHPUnit
-        run: APP_ENV=test php bin/phpunit
+        run: php bin/phpunit --configuration phpunit.xml.dist
