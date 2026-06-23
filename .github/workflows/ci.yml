@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Setup .env
+        run: cp .env.example .env
 
       # PHP
       - name: Setup PHP
@@ -54,7 +56,9 @@ jobs:
 
       # Composer
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+        run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+      - name: Symfony cache clear
+        run: php bin/console cache:clear --env=test
 
       # Wait for MySQL
       - name: Wait for MySQL
