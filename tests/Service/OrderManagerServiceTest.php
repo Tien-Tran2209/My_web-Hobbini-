@@ -43,6 +43,7 @@ class OrderManagerServiceTest extends TestCase
         $this->service->updateStatus($order, 'Expédié');
 
         $this->assertEquals(5, $product->getSold());
+        
         $this->assertEquals('Expédié', $order->getStatus());
     }
 
