@@ -1,9 +1,12 @@
 
 ###> symfony/framework-bundle ###
-/.env.local
-/.env.test.local
-/.env.local.php
-/.env.*.local
+.env.local
+.env.*.local
+.env.test.local
+.env.dev.local
+.env.prod.local
+.env.local.php
+/config/secrets/prod/
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
@@ -27,6 +30,14 @@ npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
+###> docker ###
+docker-compose.override.yml
+docker-compose.override*.yml
+###< docker ###
+
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+### LOGS ###
+*.log
